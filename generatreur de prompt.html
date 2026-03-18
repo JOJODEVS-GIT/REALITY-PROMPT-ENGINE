@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RealityPrompt Engine</title>
+  <style>
+    :root {
+      --bg: #f8f9fa;
+      --card: #ffffff;
+      --text: #212529;
+      --primary: #2c3e50;
+      --accent: #e74c3c;
+      --border: #dee2e6;
+    }
+    body.dark {
+      --bg: #121212;
+      --card: #1e1e1e;
+      --text: #e0e0e0;
+      --primary: #bb86fc;
+      --accent: #cf6679;
+      --border: #333;
+    }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+    }
+    header {
+      background: var(--primary);
+      color: white;
+      padding: 2rem;
+      text-align: center;
+    }
+    h1 { margin: 0; font-size: 2.2rem; }
+    h2 { margin: 0 0 0.5rem; font-size: 1.8rem; }
+    .subtitle { opacity: 0.9; font-weight: normal; font-size: 1.1rem; }
+    main {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border: 1px solid var(--border);
+    }
+    label {
+      display: block;
+      margin: 1rem 0 0.5rem;
+      font-weight: 600;
+    }
+    select, input[type="checkbox"] {
+      width: 100%;
+      padding: 0.8rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 1rem;
+    }
+    .checkbox-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    button {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 1.5rem;
+      width: 100%;
+    }
+    button:hover { opacity: 0.9; }
+    .output {
+      background: #f1f3f5;
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+      white-space: pre-wrap;
+      font-family: monospace;
+      display: none;
+    }
+    body.dark .output { background: #2d2d2d; }
+    .copy-btn {
+      background: var(--primary);
+      width: auto;
+      padding: 0.5rem 1rem;
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+    }
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: #666;
+      font-size: 0.9rem;
+    }
+    .toggle-dark {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <button class="toggle-dark" onclick="document.body.classList.toggle('dark')">🌙</button>
+
+  <header>
+    <h1>RealityPrompt Engine</h1>
+    <p class="subtitle">Générateur de prompts éditoriaux ancrés dans les réalités du digital</p>
+  </header>
+
+  <main>
+    <form id="engineForm">
+
+      <div class="card">
+        <h2>1. Configuration Générale</h2>
+        <label>Plateforme cible</label>
+        <select id="plateforme" required>
+          <option value="LinkedIn">LinkedIn</option>
+          <option value="Instagram">Instagram</option>
+          <option value="Facebook">Facebook</option>
+          <option value="X">X (Twitter)</option>
+        </select>
+
+        <label>Langue</label>
+        <select id="langue" required>
+          <option value="Français">Français</option>
+          <option value="Anglais">Anglais</option>
+        </select>
+
+        <label>Public cible</label>
+        <select id="public" required>
+          <option value="Entrepreneurs">Entrepreneurs</option>
+          <option value="Digital / Tech">Digital / Tech</option>
+          <option value="Créateurs">Créateurs</option>
+          <option value="Freelances">Freelances</option>
+        </select>
+
+        <label>Longueur du contenu</label>
+        <select id="longueur" required>
+          <option value="Court (&lt; 150 mots)">Court (&lt; 150 mots)</option>
+          <option value="Moyen (150–300 mots)">Moyen (150–300 mots)</option>
+          <option value="Long (&gt; 300 mots)">Long (&gt; 300 mots)</option>
+        </select>
+      </div>
+
+      <div class="card">
+        <h2>3. Contexte & Réalités</h2>
+        <div class="checkbox-item">
+          <input type="checkbox" id="contexteAfricain">
+          <label for="contexteAfricain">Activer le contexte africain (contraintes data, informalité, etc.)</label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>4. Thème Central (un seul)</h2>
+        <select id="theme" required>
+          <option value="" disabled selected>Choisis un thème</option>
+          <option value="Réalité du domaine">Réalité du domaine</option>
+          <option value="Discipline & constance">Discipline & constance</option>
+          <option value="Doute & remise en question">Doute & remise en question</option>
+          <option value="Résilience">Résilience</option>
+          <option value="Progression silencieuse">Progression silencieuse</option>
+          <option value="Focus long terme">Focus long terme</option>
+          <option value="Coût caché de la discipline">Coût caché de la discipline</option>
+        </select>
+      </div>
+
+      <div class="card">
+        <h2>5. Ton & Style</h2>
+        <label>Ton principal</label>
+        <select id="ton" required>
+          <option value="Calme & lucide">Calme & lucide</option>
+          <option value="Cash mesuré">Cash mesuré</option>
+          <option value="Cash frontal">Cash frontal (factuel)</option>
+        </select>
+
+        <label>Intensité</label>
+        <select id="intensite">
+          <option value="douce">Douce</option>
+          <option value="tranchante">Tranchante</option>
+          <option value="percutante">Percutante</option>
+        </select>
+      </div>
+
+      <button type="submit">Générer le Prompt + Post exemple</button>
+    </form>
+
+    <div id="result" class="card" style="display:none;">
+      <h2>Résultat</h2>
+      
+      <h3>Prompt Final (à copier pour une IA)</h3>
+      <pre class="output" id="promptOutput"></pre>
+      <button class="copy-btn" onclick="copyToClipboard('promptOutput')">Copier le prompt</button>
+
+      <h3 style="margin-top:2rem;">Exemple de Post généré</h3>
+      <pre class="output" id="postOutput"></pre>
+      <button class="copy-btn" onclick="copyToClipboard('postOutput')">Copier le post</button>
+    </div>
+  </main>
+
+  <footer>
+    RealityPrompt Engine — Une voix lucide, sans bullshit.<br>
+    Philosophie : cadre de pensée rigoureux • cohérence absolue • réalité avant tout
+  </footer>
+
+  <script>
+    document.getElementById('engineForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      // Récupération des valeurs
+      const plateforme = document.getElementById('plateforme').value;
+      const langue = document.getElementById('langue').value;
+      const public = document.getElementById('public').value;
+      const longueur = document.getElementById('longueur').value;
+      const contexteAfricain = document.getElementById('contexteAfricain').checked;
+      const theme = document.getElementById('theme').value;
+      const ton = document.getElementById('ton').value;
+      const intensite = document.getElementById('intensite').value;
+
+      // Construction du Prompt Final
+      let prompt = `Tu es un rédacteur professionnel expérimenté, humain, crédible et lucide. 
+Ton style est anti-bullshit, anti-gourou, orienté réalité brute, discipline et effort sustained. 
+Tu ne fais jamais de promesses irréalistes, tu n'utilises aucun jargon vide, aucun cliché motivant, aucune solution miracle (même implicite). 
+Tu ne cites jamais de technologie ou d'outil spécifique. Tu ne parles jamais de ton expérience personnelle.
+
+Écris un post ${longueur.toLowerCase()} pour ${plateforme}, en ${langue}, destiné à un public de ${public}.
+
+Thème unique et central : ${theme}.
+
+Ton général : ${ton}. Intensité : ${intensite}.
+
+${contexteAfricain ? "Intègre subtilement le contexte africain réaliste (contraintes data, informalité économique, coupures, etc.) sans en faire trop." : ""}
+
+Structure obligatoire du post :
+- Accroche forte (question, constat brutal ou paradoxe)
+- Paragraphes courts
+- Au milieu : exprimer un doute, une fatigue ou une micro-tension réelle
+- Phrase vérité finale brutale, incontestable et mémorable
+- Hashtags en fin : 5 à 8, spécifiques et peu concurrentiels (ex: #TravailInvisible #ProgressionSilencieuse #RéalitéDigitale #DisciplineQuotidienne #CoûtDeLaDiscipline)
+
+Le post doit sonner 100% humain, profond, cash quand il faut, mais toujours factuel et sans embellissement.`;
+
+      // Génération d'un exemple de post (simulation IA)
+      let postExample = generatePostExample({
+        plateforme, langue, public, longueur, contexteAfricain, theme, ton, intensite
+      });
+
+      // Affichage
+      document.getElementById('promptOutput').textContent = prompt;
+      document.getElementById('postOutput').textContent = postExample;
+      document.getElementById('result').style.display = 'block';
+      document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    function generatePostExample(config) {
+      // Cette fonction simule la sortie d'une IA avec la philosophie stricte
+      const { theme, ton, contexteAfricain, longueur } = config;
+
+      let accroche = "";
+      let milieu = "";
+      let fin = "";
+      let hashtags = "\n\n#TravailInvisible #ProgressionSilencieuse #RéalitéDigitale #DisciplineQuotidienne #CoûtDeLaDiscipline";
+
+      if (theme === "Progression silencieuse") {
+        accroche = "On vous vend du succès overnight.\n\nLa réalité ? 90 % du chemin se fait dans l’ombre, sans likes, sans applaudissements.";
+        milieu = "\nIl y a des matins où tu ouvres ton dashboard et rien n’a bougé.\nTu te demandes si tu perds ton temps.\nPourtant tu continues.";
+        fin = "\nLa progression silencieuse, c’est ça : avancer sans preuve visible.\nJusqu’au jour où les résultats parlent d’eux-mêmes.\nEt là, plus personne ne demande comment tu as fait.";
+      } else if (theme === "Coût caché de la discipline") {
+        accroche = "Tout le monde parle de discipline comme si c’était gratuit.";
+        milieu = "\nPersonne ne dit que pour tenir sur 3 ans, il faut parfois dire non à des sorties, à des relations, au sommeil décent.\nQue ça pèse sur le moral certains jours.";
+        fin = "\nLa discipline a un prix.\nCeux qui réussissent longtemps sont juste ceux qui ont accepté de le payer.\nSans négocier.";
+      } else if (theme === "Doute & remise en question") {
+        accroche = "Le doute n’est pas l’ennemi du progrès.";
+        milieu = "\nIl revient tous les 6 mois : « Est-ce que je me plante complètement ? »\nTu regardes les autres qui semblent avancer plus vite.\nTu te demandes si tu devrais pivoter.";
+        fin = "\nMais ceux qui tiennent ne sont pas ceux qui n’ont jamais douté.\nCe sont ceux qui ont continué malgré le doute.\nPoint.";
+      }
+      // Ajoute d'autres thèmes ici si tu veux
+
+      return accroche + milieu + fin + hashtags;
+    }
+
+    function copyToClipboard(elementId) {
+      const text = document.getElementById(elementId).textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Copié dans le presse-papiers !");
+      });
+    }
+  </script>
+</body>
+</html>
