@@ -12,7 +12,7 @@ Reality Prompt Engine est un outil web permettant de générer des prompts optim
 
 ## 🚀 Démo en ligne
 
-👉 [reality-prompt-engine.vercel.app](https://reality-prompt-engine.vercel.app)
+👉 [jojodevs-git.github.io/REALITY-PROMPT-ENGINE](https://jojodevs-git.github.io/REALITY-PROMPT-ENGINE/)
 
 ## 📁 Structure du projet
 
